@@ -8,8 +8,7 @@ import powerlaw
 Fb = nx.read_edgelist('facebook_combined.txt')
 Deg_dist_ref = nx.degree_histogram(Fb)
 Deg_prob_ref = np.array(Deg_dist_ref)/float(np.sum(np.array(Deg_dist_ref)))
-print list(Deg_prob_ref)
-PL = powerlaw.Fit(Deg_prob_ref)
+Alpha_ref = powerlaw.Fit(Deg_prob_ref).power_law.alpha #Parametre de la loi de puissance de la distribution des degrees du graphe de reference
 
 '''
 N_ref = np.sum(Deg_dist_ref) #Nb de noeuds
@@ -30,12 +29,12 @@ class Individu:
 			G = nx.gnm_random_graph(N,5)
 		if TYPE == "SF":
 			G = nx.barabasi_albert_graph(N, 5)
-			
+
 		self.CC = nx.average_clustering(G)
 		self.DI = nx.diameter(G)
-		Degres = np.array(nx.degree_histogram(G))
 		self.DD = nx.degree_histogram(G)
-		
+		self.W = 1
+		self.N = N
 		self.matrix = nx.to_numpy_matrix(G)
 
 	def prattribut(self):
@@ -43,6 +42,7 @@ class Individu:
 		print "CC", self.CC
 		print "Diamètre :", self.DI
 		print "Distribution des degres :", self.DD
+		print "Fitness", self.W
 		
 	def Maj_Fitness(self):
 		'''
@@ -55,6 +55,7 @@ class Individu:
 			for i in range(diff_taille):
 				Deg_dist.append(0)
 		
+		
 		#On calcule la différence de degrés par rapport au graphe de reférence
 		Diff_DD = 0
 		for i in range(len(self.DD)):
@@ -62,23 +63,37 @@ class Individu:
 
 		print Diff_DD
 		'''
-		Diff_CC = (CC_ref - self.CC)**2
-		Diff_DI = (DI_ref - self.DI)**2
+		#Diff_CC = (CC_ref - self.CC)**2
+		#Diff_DI = (DI_ref - self.DI)**2
 		
+		wCC = min([CC_ref, self.CC])/max([CC_ref, self.CC]) #Fitness du coefficient de clustering
+		wDI = float(min([DI_ref, self.DI]))/max([DI_ref, self.DI]) #Fitness du diametre
+		DD_prob = np.array(self.DD)/float(np.sum(self.DD))
+		Alpha = powerlaw.Fit(DD_prob).power_law.alpha #Coefficiant de la loi de puissance de la distribution des degres
+		wDD = min([Alpha, Alpha_ref])/max([Alpha, Alpha_ref]) #Fitness de la distribution des degres (en passant par la comparaison des lois de puissance)
 		
-		#Dist_prob = Deg_dist
+		self.W = (wCC + wDI + wDD)/3 #FITNESS TOTALE
+		'''
+		wDD = 0
+		for i in range(len(Deg_dist_ref)):
+			if max([self.DD[i], Deg_dist_ref[i]]) != 0:
+				wDD +=  float(min([self.DD[i], Deg_dist_ref[i]]))/max([self.DD[i], Deg_dist_ref[i]])
+				wDD = wDD * len(Deg_dist_ref)
 		
-		#Pour pouvoir créer la fonction de sélection on renvoie des valeurs de fitness fausses, tu changeras ça Alexis
-		f = Diff_CC + Diff_DI
-		return f
+		print self.DD, Deg_dist_ref
+		print "3 fitness :", wCC, wDI, wDD
 		
-		
+		self.W = wCC/3 + wDI/3 + wDD/3
+		'''
+	def mutation(self):   #Fonction de mutation, on change un lien d'amitié sur l'individu sélectionné
+		i,j = np.random.randint(1,self.N,2)
+		if self.matrix[i][j] == 0:
+			self.matrix[i][j] = 1
+			self.matrix[j][i] = 1
+		elif self.matrix[i][j] == 1:
+			self.matrix[i][j] = 0
+			self.matrix[j][i] = 1
 
-
-
-
-
-
-I = Individu("SW", 20)
+I = Individu("SW", 30)
 I.Maj_Fitness()
-#I.prattribut()
+I.prattribut()
