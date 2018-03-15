@@ -6,8 +6,8 @@ import networkx as nx
 Fb = nx.read_edgelist('facebook_combined.txt')
 Deg_dist_ref = nx.degree_histogram(Fb)
 N_ref = np.sum(Deg_dist_ref)
-CC_ref = nx.average_clustering(Fb)
-DI_ref = nx.diameter(Fb)
+CC_ref = 0.6055
+DI_ref = 3.6925
 
 print N_ref
 
@@ -50,6 +50,10 @@ class Individu:
 			Diff_DD = Diff_DD + (self.DD[i] - Deg_dist_ref[i])**2
 
 		print Diff_DD
+
+
+
+
 
 
 I = Individu("SW", 20)
