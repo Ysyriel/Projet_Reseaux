@@ -68,6 +68,9 @@ class Individu:
 		
 		#Dist_prob = Deg_dist
 		
+		#Pour pouvoir créer la fonction de sélection on renvoie des valeurs de fitness fausses, tu changeras ça Alexis
+		f = Diff_CC + Diff_DI
+		return f
 		
 		
 
