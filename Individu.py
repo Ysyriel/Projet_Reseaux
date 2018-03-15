@@ -22,10 +22,6 @@ DI_ref = 8
 
 
 
-
-print N_ref
-
-
 class Individu:
 	def __init__(self, TYPE, N):
 		if TYPE == "SW":
@@ -74,6 +70,10 @@ class Individu:
 		
 		
 		
+
+
+
+
 
 
 I = Individu("SW", 20)
