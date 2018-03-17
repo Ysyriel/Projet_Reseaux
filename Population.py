@@ -40,9 +40,23 @@ class Population:
 	
 	def Crossing_over(self):
 		g1, g2 = np.random.choice(self.nb, 2, replace = False) #Selection des 2 individus
-		i1, i2 = np.random.choice(self.N, 2, replace = False) #Selection de la portion de la matrice à interchanger
+		I1, I2 = np.random.choice(self.N+1, 2, replace = False) #Selection de la portion de la matrice à interchanger
+		i1 = min(I1, I2)
+		i2 = max(I1, I2)
+		print g1, g2
 		print i1, i2
-		self.pop[g1].matrix[:,i1:i2], self.pop[g2].matrix[:,i1:i2], self.pop[g1].matrix[i1:i2,:], self.pop[g2].matrix[i1:i2,:] = self.pop[g2].matrix[:,i1:i2], self.pop[g1].matrix[:,i1:i2], self.pop[g2].matrix[i1:i2,:], self.pop[g1].matrix[i1:i2,:]
+		i1, i2 = 0,10
+		
+		#STOCKAGE
+		c1 = np.matrix(self.pop[g1].matrix[:,i1:i2])
+		c2 = np.matrix(self.pop[g2].matrix[:,i1:i2])
+		l1 = np.matrix(self.pop[g1].matrix[i1:i2,:])
+		l2 = np.matrix(self.pop[g2].matrix[i1:i2,:])
+		#REMPLACEMENT
+		self.pop[g1].matrix[:,i1:i2] = c2
+		self.pop[g1].matrix[i1:i2,:] = l2
+		self.pop[g2].matrix[:,i1:i2] = c1
+		self.pop[g2].matrix[i1:i2,:] = l1
 		
 
 
