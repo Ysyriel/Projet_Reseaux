@@ -38,12 +38,20 @@ class Individu:
 		self.matrix = nx.to_numpy_matrix(G)
 
 	def prattribut(self):
-		print "Matrice d'adjacence :", (self.matrix)
+		print "Matrice d'adjacence :\n", (self.matrix)
 		print "CC", self.CC
 		print "Diamètre :", self.DI
 		print "Distribution des degres :", self.DD
 		print "Fitness", self.W
 		
+		
+	def Maj_attributs(self):
+		Graph = nx.from_numpy_matrix(self.matrix)
+		self.CC = nx.average_clustering(Graph)
+		self.DI = nx.diameter(Graph)
+		self.DD = nx.degree_histogram(Graph)
+		
+	
 	def Maj_Fitness(self):
 		'''
 		#On ajuste la taille des deux liste en ajoutant des 0 dans la plus petite :
@@ -73,6 +81,7 @@ class Individu:
 		wDD = min([Alpha, Alpha_ref])/max([Alpha, Alpha_ref]) #Fitness de la distribution des degres (en passant par la comparaison des lois de puissance)
 		
 		self.W = (wCC + wDI + wDD)/3 #FITNESS TOTALE
+		
 		'''
 		wDD = 0
 		for i in range(len(Deg_dist_ref)):
@@ -86,14 +95,24 @@ class Individu:
 		self.W = wCC/3 + wDI/3 + wDD/3
 		'''
 	def mutation(self):   #Fonction de mutation, on change un lien d'amitié sur l'individu sélectionné
-		i,j = np.random.randint(1,self.N,2)
-		if self.matrix[i][j] == 0:
-			self.matrix[i][j] = 1
-			self.matrix[j][i] = 1
-		elif self.matrix[i][j] == 1:
-			self.matrix[i][j] = 0
-			self.matrix[j][i] = 1
+		print type(self.matrix)
+		i,j = np.random.randint(0,self.N,2)
+		if self.matrix[i,j] == 0:
+			self.matrix[i,j] = 1
+			self.matrix[i,j] = 1
+		elif self.matrix[i,j] == 1:
+			self.matrix[i,j] = 0
+			self.matrix[i,j] = 1
+			
 
+
+#TESTS
+'''
 I = Individu("SW", 30)
 I.Maj_Fitness()
 I.prattribut()
+I.mutation()
+I.Maj_attributs()
+I.Maj_Fitness()
+I.prattribut()
+'''
