@@ -38,7 +38,7 @@ class Individu:
 		self.matrix = nx.to_numpy_matrix(G)
 
 	def prattribut(self):
-		print "Matrice d'adjacence :\n", (self.matrix)
+		#print "Matrice d'adjacence :\n", (self.matrix) #Prend de la place...
 		print "CC", self.CC
 		print "Diamètre :", self.DI
 		print "Distribution des degres :", self.DD
