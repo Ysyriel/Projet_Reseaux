@@ -99,10 +99,10 @@ class Individu:
 		i,j = np.random.randint(0,self.N,2)
 		if self.matrix[i,j] == 0:
 			self.matrix[i,j] = 1
-			self.matrix[i,j] = 1
+			self.matrix[j,i] = 1
 		elif self.matrix[i,j] == 1:
 			self.matrix[i,j] = 0
-			self.matrix[i,j] = 1
+			self.matrix[j,i] = 0
 			
 
 
