@@ -3,6 +3,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
+import time
+t0 = time.time()
 
 from Individu import *
 
@@ -94,3 +96,5 @@ for i in range(20):
 	P.Crossing_over()
 '''
 
+
+print "TEMPS :", time.time() - t0
