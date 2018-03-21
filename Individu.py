@@ -45,14 +45,14 @@ class Individu:
 		print "Fitness", self.W
 		
 		
-	def Maj_attributs(self):
+	def maj_attributs(self):
 		Graph = nx.from_numpy_matrix(self.matrix)
 		self.CC = nx.average_clustering(Graph)
 		self.DI = nx.diameter(Graph)
 		self.DD = nx.degree_histogram(Graph)
 		
 	
-	def Maj_Fitness(self):
+	def maj_fitness(self):
 		'''
 		#On ajuste la taille des deux liste en ajoutant des 0 dans la plus petite :
 		diff_taille = len(Deg_dist_ref)-len(self.DD)

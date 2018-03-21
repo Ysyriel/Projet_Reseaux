@@ -14,9 +14,24 @@ class Population:
 		for i in range(nb): 
 			self.pop.append(Individu(TYPE,  N))
 			
-	def pmatrix(self): #Affiche les matrices de l'ensemble des graphes de la population
+	def Pmatrix(self): #Affiche les matrices de l'ensemble des graphes de la population
 		for i in range(len(self.pop)):
 			print "Graphe %d:\n" %i, self.pop[i].matrix
+			
+	def Pfitness(self):
+		W_list = []
+		for ind in range(self.nb):
+			W_list.append(self.pop[ind].W)
+		print "FITNESS :", W_list
+		print "FITNESS MOYENNE :", np.sum(W_list) / self.nb
+	
+	def Maj_attributs(self):
+		for ind in range(self.nb) : 
+			self.pop[ind].maj_attributs()
+			
+	def Maj_fitness(self):
+		for ind in range(self.nb) : 
+			self.pop[ind].maj_fitness()
 		
 	
 	def selection(self):
@@ -42,9 +57,6 @@ class Population:
 		I1, I2 = np.random.choice(self.N+1, 2, replace = False) #Selection de la portion de la matrice à interchanger
 		i1 = min(I1, I2)
 		i2 = max(I1, I2)
-		print g1, g2
-		print i1, i2
-		i1, i2 = 0,10
 		
 		#STOCKAGE
 		c1 = np.matrix(self.pop[g1].matrix[:,i1:i2])
@@ -64,15 +76,21 @@ P = Population(2, "SF", 10)
 #Run de test 
 
 print 'Test mises à jours de la population'
-for temps in range(5):
+for temps in range(10):
 	print "AU TEMPS",temps
-	for ind in P.pop :   #1) On calcule les fitness pour chaque individu
-		ind.Maj_Fitness()
+	P.Maj_fitness()
 	P.selection()   #2) Selection des individus
 	P.Crossing_over() #3) Crossing overs sur les individus sélectionnés
-	P.mutation() #4) Mutation éventuelle
-	for ind in P.pop :   #1) Mise à jours des attributs
-		ind.Maj_attributs()
-		ind.prattribut()
+	P.Maj_attributs()
+	P.Pfitness()
 	print "=========================================================="
+
+
+'''
+#Test crossing over
+for i in range(20):
+	print "AU TEMPS :", i
+	P.Pmatrix()
+	P.Crossing_over()
+'''
 
