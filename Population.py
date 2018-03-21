@@ -67,13 +67,14 @@ class Population:
 		
 
 
-P = Population(2, "Random", 10)
+P = Population(2, "SW", 10)
 
 #Run de test 
 
 print 'Test mises à jours de la population'
-for temps in range(10):
+for temps in range(1):
 	print "AU TEMPS",temps
+	P.pop[0].prattribut()
 	P.Maj_fitness()
 	P.selection()   #2) Selection des individus
 	P.Crossing_over() #3) Crossing overs sur les individus sélectionnés

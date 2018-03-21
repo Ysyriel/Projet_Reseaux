@@ -2,14 +2,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
-import powerlaw
+from louispuissance import *
 import sys
 
 #Importation du graphe de base et de ses caracteristiques
 Fb = nx.read_edgelist('facebook_combined.txt')
 Deg_dist_ref = nx.degree_histogram(Fb)
 Deg_prob_ref = np.array(Deg_dist_ref)/float(np.sum(np.array(Deg_dist_ref)))
-Alpha_ref = powerlaw.Fit(Deg_prob_ref).power_law.alpha #Parametre de la loi de puissance de la distribution des degrees du graphe de reference
+Alpha_ref = Fit(Deg_prob_ref).power_law.alpha #Parametre de la loi de puissance de la distribution des degrees du graphe de reference
 
 '''
 N_ref = np.sum(Deg_dist_ref) #Nb de noeuds
@@ -28,8 +28,8 @@ class Individu:
 			sys.exit("ERREUR DE SAISIE DANS LE TYPE DU GRAPHE")
 		if TYPE == "SW":
 			G = nx.newman_watts_strogatz_graph(N, 4, 0.50)
-		if TYPE == "Random":
-			G = nx.nx.complete_graph(N)
+		#if TYPE == "Random":
+			#G = nx.complete_graph(N)
 		if TYPE == "SF":
 			G = nx.barabasi_albert_graph(N, 5)
 		
@@ -81,7 +81,7 @@ class Individu:
 		wCC = min([CC_ref, self.CC])/max([CC_ref, self.CC]) #Fitness du coefficient de clustering
 		wDI = float(min([DI_ref, self.DI]))/max([DI_ref, self.DI]) #Fitness du diametre
 		DD_prob = np.array(self.DD)/float(np.sum(self.DD))
-		Alpha = powerlaw.Fit(DD_prob).power_law.alpha #Coefficiant de la loi de puissance de la distribution des degres
+		Alpha = Fit(DD_prob).power_law.alpha #Coefficient de la loi de puissance de la distribution des degres
 		wDD = min([Alpha, Alpha_ref])/max([Alpha, Alpha_ref]) #Fitness de la distribution des degres (en passant par la comparaison des lois de puissance)
 		
 		self.W = (wCC + wDI + wDD)/3 #FITNESS TOTALE
