@@ -3,6 +3,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
+import time
+t0 = time.time()
 
 from Individu import *
 
@@ -75,4 +77,4 @@ for temps in range(5):
 		ind.Maj_attributs()
 		ind.prattribut()
 	print "=========================================================="
-
+print "TEMPS :", time.time() - t0
