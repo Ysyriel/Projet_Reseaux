@@ -1,9 +1,4 @@
 #coding: utf8
-#Paul test
-import numpy as np
-import matplotlib.pyplot as plt
-import networkx as nx
-
 from Individu import *
 
 class Population:
@@ -59,7 +54,7 @@ class Population:
 		
 
 
-P = Population(2, "SF", 10)
+P = Population(2, "Random", 10)
 
 #Run de test 
 

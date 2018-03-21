@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
 import powerlaw
+import sys
 
 #Importation du graphe de base et de ses caracteristiques
 Fb = nx.read_edgelist('facebook_combined.txt')
@@ -23,13 +24,16 @@ DI_ref = 8
 
 class Individu:
 	def __init__(self, TYPE, N):
+		if (TYPE != "SF" and TYPE != "Random" and TYPE != "SW"):	
+			sys.exit("ERREUR DE SAISIE DANS LE TYPE DU GRAPHE")
 		if TYPE == "SW":
 			G = nx.newman_watts_strogatz_graph(N, 4, 0.50)
 		if TYPE == "Random":
-			G = nx.gnm_random_graph(N,5)
+			G = nx.nx.complete_graph(N)
 		if TYPE == "SF":
 			G = nx.barabasi_albert_graph(N, 5)
-
+		
+			
 		self.CC = nx.average_clustering(G)
 		self.DI = nx.diameter(G)
 		self.DD = nx.degree_histogram(G)
