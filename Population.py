@@ -1,6 +1,9 @@
 #coding: utf8
 
 from Individu import *
+import time
+
+t0 = time.time()
 
 class Population:
 	def __init__(self, nb, TYPE, N):
@@ -67,7 +70,7 @@ class Population:
 		
 
 
-P = Population(2, "Random", 10)
+P = Population(2, "SW", 10)
 
 #Run de test 
 
