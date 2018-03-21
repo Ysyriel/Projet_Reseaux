@@ -1,6 +1,9 @@
 #coding: utf8
 
 from Individu import *
+import time
+
+t0 = time.time()
 
 class Population:
 	def __init__(self, nb, TYPE, N):
