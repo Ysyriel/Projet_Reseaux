@@ -129,8 +129,8 @@ class Fit(object):
             #self.power_law = pl
         else:
             self.fixed_xmin=False
-            if verbose:
-                print("Calculating best minimal value for power law fit", file=sys.stderr)
+            #if verbose:
+                #print("Calculating best minimal value for power law fit", file=sys.stderr)
             self.find_xmin()
 
         self.data = self.data[self.data>=self.xmin]
