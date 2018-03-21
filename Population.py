@@ -35,16 +35,19 @@ class Population:
 	
 	def selection(self):
 		list_W = [] #liste des fitness pour chaque individu
-		pioche = [] #liste de la "pioche", selon le fitness d'un individu son indice sera représenté plus ou moins de fois dans cette liste.
+		poids = [] #liste de la "pioche", selon le fitness d'un individu son indice sera représenté plus ou moins de fois dans cette liste.
+		individus = []
 		for i in range(self.nb):
 			list_W.append(self.pop[i].W) #Ajout des fitness pour chaque individu 
 		W_total = np.sum(list_W)
 		for i,j in enumerate(list_W) :
-			nombre = (j/W_total)*100 #On crée le poids relatif de chaque fitness (par rapport à la somme totale des fitness).
-			pioche = np.concatenate([pioche,np.repeat(i,int(nombre))]) #Puis on incrémente la liste "pioche"
-		self.pop = [self.pop[int(i)] for i in np.random.choice(pioche,self.nb,replace=True)] #Et on remet à jour la nouvelle pop de nb individus à partir des nb indices de "pioche".
+			poids.append(j/W_total)
+			individus.append(i)
+			#pioche = np.concatenate([pioche,np.repeat(i,int(nombre))]) #Puis on incrémente la liste "pioche"
+		#self.pop = [self.pop[int(i)] for i in np.random.choice(pioche,self.nb,replace=True)] #Et on remet à jour la nouvelle pop de nb individus à partir des nb indices de "pioche".
+		self.pop = [self.pop[int(i)] for i in np.random.choice(individus,self.nb,poids)]
+		print self.Pmatrix()
 
-		
 	def mutation(self):
 		indice = np.random.randint(1,1000) # Proba de 1/1000 qu'un individu mute
 		if indice < self.nb:
@@ -70,7 +73,7 @@ class Population:
 		
 
 
-P = Population(2, "SW", 10)
+P = Population(5, "SW", 10)
 
 #Run de test 
 
@@ -81,7 +84,7 @@ for temps in range(10):
 	P.selection()   #2) Selection des individus
 	P.Crossing_over() #3) Crossing overs sur les individus sélectionnés
 	P.Maj_attributs()
-	P.Pfitness()
+	#P.Pfitness()
 	print "=========================================================="
 
 
