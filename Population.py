@@ -12,17 +12,21 @@ class Population:
 		self.N = N
 		for i in range(nb): 
 			self.pop.append(Individu(TYPE,  N))
-			
-	def Pmatrix(self): #Affiche les matrices de l'ensemble des graphes de la population
-		for i in range(len(self.pop)):
-			print "Graphe %d:\n" %i, self.pop[i].matrix
-			
-	def Pfitness(self):
-		W_list = []
-		for ind in range(self.nb):
-			W_list.append(self.pop[ind].W)
-		print "FITNESS :", W_list
-		print "FITNESS MOYENNE :", np.sum(W_list) / self.nb
+
+	def __str__(self):  # Ce qui sera affiché si on print juste P
+		return "--------->\nTaille de la population : {} \nNombre d'itérations : {}".format(self.nb, self.N)
+
+
+	def display(self,*args): # Affiche les matrices de l'ensemble des graphes de la population et/ou la fitness
+		if "matrix" in args:
+			for i in range(len(self.pop)):
+				print "Graphe %d : \n " %i, self.pop[i].matrix
+		if "fitness" in args:
+			W_list = []
+			for ind in range(self.nb):
+				W_list.append(self.pop[ind].W)
+			print "FITNESS :", W_list
+			print "FITNESS MOYENNE :", np.sum(W_list) / self.nb
 	
 	def Maj_attributs(self):
 		for ind in range(self.nb) : 
@@ -46,7 +50,7 @@ class Population:
 			#pioche = np.concatenate([pioche,np.repeat(i,int(nombre))]) #Puis on incrémente la liste "pioche"
 		#self.pop = [self.pop[int(i)] for i in np.random.choice(pioche,self.nb,replace=True)] #Et on remet à jour la nouvelle pop de nb individus à partir des nb indices de "pioche".
 		self.pop = [self.pop[int(i)] for i in np.random.choice(individus,self.nb,poids)]
-		print self.Pmatrix()
+		#print self.Pmatrix()
 
 	def mutation(self):
 		indice = np.random.randint(1,1000) # Proba de 1/1000 qu'un individu mute
@@ -78,10 +82,11 @@ P = Population(5, "SW", 10)
 #Run de test 
 
 print 'Test mises à jours de la population'
+print P  # Fait appel à la méthode spéciale __str__
 for temps in range(1):
 	print "AU TEMPS",temps
 	P.pop[0].prattribut()
-	P.Maj_fitness()
+	P.display("matrix")
 	P.selection()   #2) Selection des individus
 	P.Crossing_over() #3) Crossing overs sur les individus sélectionnés
 	P.Maj_attributs()
