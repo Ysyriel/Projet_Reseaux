@@ -51,6 +51,7 @@ class Population:
 		#self.pop = [self.pop[int(i)] for i in np.random.choice(pioche,self.nb_individus,replace=True)] #Et on remet à jour la nouvelle pop de nb_individus individus à partir des nb_individus indices de "pioche".
 		self.pop = [self.pop[int(i)] for i in np.random.choice(individus,self.nb_individus,poids)]
 		#print self.Pmatrix()
+		return list_W
 
 	def mutation(self):
 		indice = np.random.randint(1,1000) # Proba de 1/1000 qu'un individu mute
@@ -77,21 +78,30 @@ class Population:
 		
 
 
-P = Population(5, "SW", 6)
+'=========================================================================================================='
+'						DECLARATION DES VARIABLES ET INSTANCIATION DE LA POPULATION'
+'=========================================================================================================='
 
-#Run de test 
+P = Population(5, "SW", 6)
+nb_it = 100
+list_best_fitness = []
+
+'=========================================================================================================='
+'												RUN DE TEST'
+'==========================================================================================================' 
 
 print '\n------------> Test mise à jour de la population <------------'
 print P  # Fait appel à la méthode spéciale __str__
-for temps in range(1):
-	print "AU TEMPS",temps
-	P.pop[0].prattribut()
-	P.display("fitness","matrix")
-	P.selection()   #2) Selection des individus
+for temps in range(nb_it):
+	print "AU TEMPS",temps,"/",nb_it
+	# P.pop[0].prattribut()
+	# P.display("fitness","matrix")
+	fit = P.selection()   #2) Selection des individus --> return liste des fitness de chaque individu
+	list_best_fitness.append(max(fit))  # Pour suivre l'évolution des fitness au cours des itérations
 	P.Crossing_over() #3) Crossing overs sur les individus sélectionnés
 	P.Maj_attributs()
-	#P.Pfitness()
-	print "=========================================================="
+print(list_best_fitness) # Ça servira quand la fitness fonctionnera...
+print "=========================================================="
 
 
 '''
