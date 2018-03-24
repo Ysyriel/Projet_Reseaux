@@ -6,15 +6,15 @@ import time
 t0 = time.time()
 
 class Population:
-	def __init__(self, nb_individus, graph_type, nb_it):
+	def __init__(self, nb_individus, graph_type, ind_size):
 		self.nb_individus = nb_individus
-		self.nb_it = nb_it
+		self.ind_size = ind_size
 		self.pop = []  # Contiendra tous les individus
 		for i in range(nb_individus): 
-			self.pop.append(Individu(graph_type,  nb_it))
+			self.pop.append(Individu(graph_type,  ind_size))
 
 	def __str__(self):  # Ce qui sera affiché si on print juste P
-		return "Taille de la population : {} \nNombre d'itérations : {}".format(self.nb_individus, self.nb_it)
+		return "Taille de la population : {} \nNombre d'itérations : {}".format(self.nb_individus, self.ind_size)
 
 
 	def display(self,*args): # Affiche les matrices de l'ensemble des graphes de la population et/ou la fitness
@@ -60,7 +60,7 @@ class Population:
 	
 	def Crossing_over(self):
 		g1, g2 = np.random.choice(self.nb_individus, 2, replace = False) #Selection des 2 individus
-		I1, I2 = np.random.choice(self.nb_it+1, 2, replace = False) #Selection de la portion de la matrice à interchanger
+		I1, I2 = np.random.choice(self.ind_size+1, 2, replace = False) #Selection de la portion de la matrice à interchanger
 		i1 = min(I1, I2)
 		i2 = max(I1, I2)
 		
@@ -77,7 +77,7 @@ class Population:
 		
 
 
-P = Population(5, "SW", 10)
+P = Population(5, "SW", 6)
 
 #Run de test 
 
@@ -86,7 +86,7 @@ print P  # Fait appel à la méthode spéciale __str__
 for temps in range(1):
 	print "AU TEMPS",temps
 	P.pop[0].prattribut()
-	P.display("fitness")
+	P.display("fitness","matrix")
 	P.selection()   #2) Selection des individus
 	P.Crossing_over() #3) Crossing overs sur les individus sélectionnés
 	P.Maj_attributs()
