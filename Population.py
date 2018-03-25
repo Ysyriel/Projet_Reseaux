@@ -3,7 +3,6 @@
 from Individu import *
 import time
 
-t0 = time.time()
 
 class Population:
 	def __init__(self, nb_individus, graph_type, ind_size):
@@ -14,7 +13,7 @@ class Population:
 			self.pop.append(Individu(graph_type,  ind_size))
 
 	def __str__(self):  # Ce qui sera affiché si on print juste P
-		return "Taille de la population : {} \nNombre d'itérations : {}".format(self.nb_individus, self.ind_size)
+		return "Taille de la population : {} \nTaille des individus : {}".format(self.nb_individus, self.ind_size)
 
 
 	def display(self,*args): # Affiche les matrices de l'ensemble des graphes de la population et/ou la fitness
@@ -82,27 +81,29 @@ class Population:
 '						DECLARATION DES VARIABLES ET INSTANCIATION DE LA POPULATION'
 '=========================================================================================================='
 
-P = Population(5, "SW", 6)
-nb_it = 100
-list_best_fitness = []
+# taille_population = 10
+# taille_individus = 10
+# nb_it = 1
+# P = Population(taille_population, "SW", taille_individus)
+# list_best_fitness = []
 
 '=========================================================================================================='
 '												RUN DE TEST'
 '==========================================================================================================' 
 
-print '\n------------> Test mise à jour de la population <------------'
-print P  # Fait appel à la méthode spéciale __str__
-for temps in range(nb_it):
-	print "AU TEMPS",temps,"/",nb_it
-	# P.pop[0].prattribut()
-	# P.display("fitness","matrix")
-	fit = P.selection()   #2) Selection des individus --> return liste des fitness de chaque individu
-	list_best_fitness.append(max(fit))  # Pour suivre l'évolution des fitness au cours des itérations
-	P.Crossing_over() #3) Crossing overs sur les individus sélectionnés
-	P.Maj_attributs()
-print(list_best_fitness) # Ça servira quand la fitness fonctionnera...
-print "=========================================================="
-
+# print '\n------------> Test mise à jour de la population <------------'
+# print P  # Fait appel à la méthode spéciale __str__
+# for temps in range(nb_it):
+# 	# print "AU TEMPS",temps,"/",nb_it
+# 	# P.pop[0].prattribut()
+# 	# P.display("fitness","matrix")
+# 	fit = P.selection()   #2) Selection des individus --> return liste des fitness de chaque individu
+# 	list_best_fitness.append(max(fit))  # Pour suivre l'évolution des fitness au cours des itérations
+# 	P.Crossing_over() #3) Crossing overs sur les individus sélectionnés
+# 	P.Maj_attributs()
+# print(list_best_fitness) # Ça servira quand la fitness fonctionnera...
+# print "=========================================================="
+# print "TEMPS :", time.time() - t0
 
 '''
 #Test crossing over
@@ -111,6 +112,23 @@ for i in range(20):
 	P.Pmatrix()
 	P.Crossing_over()
 '''
+'=========================================================================================================='
+'								RUN DE TEST POUR ENREGISTREMENT DANS FICHIER'
+'==========================================================================================================' 
+for taille_population in range(10,50,10):
+	for taille_individus in range(10,50,10):
+		for nb_it in [1,10,100,250,500,1000]:
+			t0 = time.time()
+			P = Population(taille_population, "SW", taille_individus)
+			list_best_fitness = []
+			for t in range(nb_it):
+				fit = P.selection()
+				list_best_fitness.append(max(fit))
+				P.Crossing_over()
+				P.Maj_attributs()
+			print taille_population, '\t', taille_individus, '\t', nb_it, '\t', time.time()-t0
 
-
-print "TEMPS :", time.time() - t0
+' Pour créer un fichier propre dans le répertoire parent... '
+' ...écrire dans le terminal : echo -e "T_pop \t T_ind \t Nb_it \t Temps" > ../resultats_250318_1.txt '
+' Pour lancer l enregistrement dans le bon fichier : python Population.py >> ../resultats_250318_1.txt '
+' Les ">>" servent à écrire dans le fichier sans écraser '
