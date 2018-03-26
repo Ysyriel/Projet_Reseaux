@@ -1,6 +1,7 @@
 #coding: utf8
 
 from Individu import *
+import matplotlib.pyplot as plt
 import time
 
 
@@ -101,7 +102,9 @@ class Population:
 # 	list_best_fitness.append(max(fit))  # Pour suivre l'évolution des fitness au cours des itérations
 # 	P.Crossing_over() #3) Crossing overs sur les individus sélectionnés
 # 	P.Maj_attributs()
-# print(list_best_fitness) # Ça servira quand la fitness fonctionnera...
+# print(list_best_fitness)
+#	plt.plot(range(len(list_best_fitness)), list_best_fitness)
+#	plt.show()
 # print "=========================================================="
 # print "TEMPS :", time.time() - t0
 
@@ -115,9 +118,9 @@ for i in range(20):
 '=========================================================================================================='
 '								RUN DE TEST POUR ENREGISTREMENT DANS FICHIER'
 '==========================================================================================================' 
-for taille_population in range(10,50,10):
-	for taille_individus in range(10,50,10):
-		for nb_it in [1,10,100,250,500,1000]:
+for taille_population in range(10,51,10):
+	for taille_individus in range(100,201,50):
+		for nb_it in [100]:
 			t0 = time.time()
 			P = Population(taille_population, "SW", taille_individus)
 			list_best_fitness = []
@@ -126,6 +129,7 @@ for taille_population in range(10,50,10):
 				list_best_fitness.append(max(fit))
 				P.Crossing_over()
 				P.Maj_attributs()
+				P.Maj_fitness()
 			print taille_population, '\t', taille_individus, '\t', nb_it, '\t', time.time()-t0
 
 ' Pour créer un fichier propre dans le répertoire parent... '
