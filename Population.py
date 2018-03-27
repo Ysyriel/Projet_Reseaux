@@ -118,9 +118,9 @@ for i in range(20):
 '=========================================================================================================='
 '								RUN DE TEST POUR ENREGISTREMENT DANS FICHIER'
 '==========================================================================================================' 
-for taille_population in range(10,51,10):
-	for taille_individus in range(100,201,50):
-		for nb_it in [100]:
+for taille_population in range(20,21):
+	for taille_individus in range(20,21):
+		for nb_it in [20000]: # Linéarité prouvée et logique
 			t0 = time.time()
 			P = Population(taille_population, "SW", taille_individus)
 			list_best_fitness = []
@@ -133,6 +133,6 @@ for taille_population in range(10,51,10):
 			print taille_population, '\t', taille_individus, '\t', nb_it, '\t', time.time()-t0
 
 ' Pour créer un fichier propre dans le répertoire parent... '
-' ...écrire dans le terminal : echo -e "T_pop \t T_ind \t Nb_it \t Temps" > ../resultats_250318_1.txt '
-' Pour lancer l enregistrement dans le bon fichier : python Population.py >> ../resultats_250318_1.txt '
+' ...écrire dans le terminal : echo -e "T_pop \t T_ind \t Nb_it \t Temps" > ../Gestion_Projet_Reseau/resultats_250318_1.txt '
+' Pour lancer l enregistrement dans le bon fichier : python Population.py >> ../Gestion_Projet_Reseau/resultats_250318_1.txt '
 ' Les ">>" servent à écrire dans le fichier sans écraser '
