@@ -108,13 +108,22 @@ class Population:
 # print "=========================================================="
 # print "TEMPS :", time.time() - t0
 
-'''
+
 #Test crossing over
+for i in range(4):
+	print 'TEMPS :', i
+	P.Pfitness()
+	P.Maj_fitness()
+	P.Pfitness()
+
+
+#print "TEMPS :", time.time() - t0
+
 for i in range(20):
 	print "AU TEMPS :", i
 	P.Pmatrix()
 	P.Crossing_over()
-'''
+
 '=========================================================================================================='
 '								RUN DE TEST POUR ENREGISTREMENT DANS FICHIER'
 '==========================================================================================================' 
