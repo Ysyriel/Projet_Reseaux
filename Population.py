@@ -3,7 +3,7 @@
 from Individu import *
 import matplotlib.pyplot as plt
 import time
-
+import operator
 
 class Population:
 	def __init__(self, nb_individus, graph_type, ind_size):
@@ -36,29 +36,38 @@ class Population:
 		for ind in range(self.nb_individus) : 
 			self.pop[ind].maj_fitness()
 		
-	
-	def selection(self):
-		list_W = [] #liste des fitness pour chaque individu
-		poids = [] #liste de la "pioche", selon le fitness d'un individu son indice sera représenté plus ou moins de fois dans cette liste.
-		individus = []
-		for i in range(self.nb_individus):
-			list_W.append(self.pop[i].W) #Ajout des fitness pour chaque individu 
-		W_total = np.sum(list_W)
-		for i,j in enumerate(list_W) :
-			poids.append(j/W_total)
-			individus.append(i)
-			#pioche = np.concatenate([pioche,np.repeat(i,int(nombre))]) #Puis on incrémente la liste "pioche"
-		#self.pop = [self.pop[int(i)] for i in np.random.choice(pioche,self.nb_individus,replace=True)] #Et on remet à jour la nouvelle pop de nb_individus individus à partir des nb_individus indices de "pioche".
-		self.pop = [self.pop[int(i)] for i in np.random.choice(individus,self.nb_individus,poids)]
-		#print self.Pmatrix()
-		return list_W
+	def ponderation(self):
+		list_W = [o.W for o in self.pop]  # Liste des fitness
+		print 'FITNESS : ',list_W
+		W_total = np.sum(list_W)  # Somme des fitness
+		return [Wi/W_total for Wi in list_W]  # Vecteur de poids pour la population à l'instant t
+
+	def roulette(self,poids):  # Resort 2 individus parents avec plus forte proba pour les meilleures fitness
+		# print 'POIDS : ', poids
+		papa, maman = np.random.choice(self.pop,2,p=poids)
+		# print 'PAPA : ', papa.W, 'MAMAN : ', maman.W
+		return papa, maman  # Oui bon désolé pour le raccourci, on va dire que pour faire des enfants il faut un papa et une maman
+
+	def crossing_over2(self): # FONCTION BIDON A MODIFIER
+		return self.pop[-1]
+
+	def selection(self, proba_crossing_over = 0.8):
+		n = int(proba_crossing_over*self.nb_individus)  # Où n est le nombre de crossing-over
+		m = self.nb_individus - n  # Où m est le nombre d'individus gardés à l'identique
+		self.pop.sort(key=operator.attrgetter('W'), reverse=True)  # Trie par fitness ; plus rapide que sorted puisque pas de nouvelle liste créée
+		poids = self.ponderation()
+		for i in range(n):  # Pour créer les n enfants
+			papa, maman = self.roulette(poids)
+			enfant = self.crossing_over2()  # Faire la fonction crossing over2
+			self.pop[i+m] = enfant  # On renouvelle les n moins bons individus dans la population
+		# print [o.W for o in self.pop]  # On vérifie que la population a bien été renouvelée
+		# Intéressant à savoir : si on veut récupérer les n meilleurs d'une liste on peut voir ce lien : https://docs.python.org/3/library/heapq.html#heapq.nlargest
 
 	def mutation(self):
 		indice = np.random.randint(1,1000) # Proba de 1/1000 qu'un individu mute
 		if indice < self.nb_individus:
 			self.pop[indice].mutation() #Fonction mutation appelée dans Individus
-	
-	
+
 	def Crossing_over(self):
 		g1, g2 = np.random.choice(self.nb_individus, 2, replace = False) #Selection des 2 individus
 		I1, I2 = np.random.choice(self.ind_size+1, 2, replace = False) #Selection de la portion de la matrice à interchanger
@@ -75,6 +84,7 @@ class Population:
 		self.pop[g1].matrix[i1:i2,:] = l2
 		self.pop[g2].matrix[:,i1:i2] = c1
 		self.pop[g2].matrix[i1:i2,:] = l1
+
 		
 
 
@@ -82,15 +92,19 @@ class Population:
 '						DECLARATION DES VARIABLES ET INSTANCIATION DE LA POPULATION'
 '=========================================================================================================='
 
-# taille_population = 10
-# taille_individus = 10
-# nb_it = 1
-# P = Population(taille_population, "SW", taille_individus)
-# list_best_fitness = []
+taille_population = 10
+taille_individus = 10
+nb_it = 1
+P = Population(taille_population, "SW", taille_individus)
+list_best_fitness = []
 
 '=========================================================================================================='
 '												RUN DE TEST'
 '==========================================================================================================' 
+### TEST POUR SELECTION :
+print '\n------------> Test mise à jour de la population <------------'
+fit = P.selection()
+
 
 # print '\n------------> Test mise à jour de la population <------------'
 # print P  # Fait appel à la méthode spéciale __str__
@@ -127,33 +141,33 @@ class Population:
 '=========================================================================================================='
 '								RUN DE TEST POUR ENREGISTREMENT DANS FICHIER'
 '==========================================================================================================' 
-for i in range(10):
-	for taille_population in range(10,51):
-		for taille_individus in range(20,21):
-			for nb_it in [1]: # Linéarité prouvée et logique
-				t0 = time.time()
-				P = Population(taille_population, "SW", taille_individus)
-				gene = time.time()-t0
-				t0 = time.time()
-				list_best_fitness = []
-				for t in range(nb_it):
-					fit = P.selection()
-					selec = time.time()-t0
-					t0 = time.time()
-					list_best_fitness.append(max(fit))
-					bestfit = time.time()-t0
-					t0 = time.time()
-					P.Crossing_over()
-					crosover = time.time()-t0
-					t0 = time.time()
-					P.Maj_attributs()
-					majattrib = time.time()-t0
-					t0 = time.time()
-					P.Maj_fitness()
-					majfit = time.time()-t0
-					t0 = time.time()
-					print taille_population, '\t', taille_individus, '\t', gene,'\t', selec, '\t', bestfit, '\t', crosover, '\t', majattrib, '\t', majfit
-			#print taille_population, '\t', taille_individus, '\t', nb_it, '\t', time.time()-t0
+# for i in range(10):
+# 	for taille_population in range(10,51):
+# 		for taille_individus in range(20,21):
+# 			for nb_it in [1]: # Linéarité prouvée et logique
+# 				t0 = time.time()
+# 				P = Population(taille_population, "SW", taille_individus)
+# 				gene = time.time()-t0
+# 				t0 = time.time()
+# 				list_best_fitness = []
+# 				for t in range(nb_it):
+# 					fit = P.selection()
+# 					selec = time.time()-t0
+# 					t0 = time.time()
+# 					list_best_fitness.append(max(fit))
+# 					bestfit = time.time()-t0
+# 					t0 = time.time()
+# 					P.Crossing_over()
+# 					crosover = time.time()-t0
+# 					t0 = time.time()
+# 					P.Maj_attributs()
+# 					majattrib = time.time()-t0
+# 					t0 = time.time()
+# 					P.Maj_fitness()
+# 					majfit = time.time()-t0
+# 					t0 = time.time()
+# 					print taille_population, '\t', taille_individus, '\t', gene,'\t', selec, '\t', bestfit, '\t', crosover, '\t', majattrib, '\t', majfit
+# 			#print taille_population, '\t', taille_individus, '\t', nb_it, '\t', time.time()-t0
 
 ' Pour créer un fichier propre dans le répertoire parent... '
 ' ...écrire dans le terminal : echo -e "T_pop \t T_ind \t Nb_it \t Temps" > ../Gestion_Projet_Reseau/resultats_250318_1.txt '
