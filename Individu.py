@@ -37,9 +37,13 @@ class Individu:
 		self.CC = nx.average_clustering(G)
 		self.DI = nx.diameter(G)
 		self.DD = nx.degree_histogram(G)
-		self.W = 1
+		self.W = 0
+		self.maj_fitness()
 		self.N = N
 		self.matrix = nx.to_numpy_matrix(G)
+
+	def __str__(self):  # Ce qui sera affiché si on print juste Individu
+		return "Fitness : {}".format(self.W)
 
 	def prattribut(self):
 		#print "Matrice d'adjacence :\n", (self.matrix) #Prend de la place...
