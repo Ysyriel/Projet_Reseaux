@@ -38,7 +38,7 @@ class Population:
 		
 	def ponderation(self):
 		list_W = [o.W for o in self.pop]  # Liste des fitness
-		print 'FITNESS : ',list_W
+		# print 'FITNESS : ',list_W
 		W_total = np.sum(list_W)  # Somme des fitness
 		return [Wi/W_total for Wi in list_W]  # Vecteur de poids pour la population à l'instant t
 
