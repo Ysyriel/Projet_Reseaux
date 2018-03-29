@@ -127,19 +127,33 @@ class Population:
 '=========================================================================================================='
 '								RUN DE TEST POUR ENREGISTREMENT DANS FICHIER'
 '==========================================================================================================' 
-for taille_population in range(20,21):
-	for taille_individus in range(20,21):
-		for nb_it in [20000]: # Linéarité prouvée et logique
-			t0 = time.time()
-			P = Population(taille_population, "SW", taille_individus)
-			list_best_fitness = []
-			for t in range(nb_it):
-				fit = P.selection()
-				list_best_fitness.append(max(fit))
-				P.Crossing_over()
-				P.Maj_attributs()
-				P.Maj_fitness()
-			print taille_population, '\t', taille_individus, '\t', nb_it, '\t', time.time()-t0
+for i in range(10):
+	for taille_population in range(10,51):
+		for taille_individus in range(20,21):
+			for nb_it in [1]: # Linéarité prouvée et logique
+				t0 = time.time()
+				P = Population(taille_population, "SW", taille_individus)
+				gene = time.time()-t0
+				t0 = time.time()
+				list_best_fitness = []
+				for t in range(nb_it):
+					fit = P.selection()
+					selec = time.time()-t0
+					t0 = time.time()
+					list_best_fitness.append(max(fit))
+					bestfit = time.time()-t0
+					t0 = time.time()
+					P.Crossing_over()
+					crosover = time.time()-t0
+					t0 = time.time()
+					P.Maj_attributs()
+					majattrib = time.time()-t0
+					t0 = time.time()
+					P.Maj_fitness()
+					majfit = time.time()-t0
+					t0 = time.time()
+					print taille_population, '\t', taille_individus, '\t', gene,'\t', selec, '\t', bestfit, '\t', crosover, '\t', majattrib, '\t', majfit
+			#print taille_population, '\t', taille_individus, '\t', nb_it, '\t', time.time()-t0
 
 ' Pour créer un fichier propre dans le répertoire parent... '
 ' ...écrire dans le terminal : echo -e "T_pop \t T_ind \t Nb_it \t Temps" > ../Gestion_Projet_Reseau/resultats_250318_1.txt '
