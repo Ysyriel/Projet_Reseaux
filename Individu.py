@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from louispuissance import *
 import sys
+import random as rn
 
 #Importation du graphe de base et de ses caracteristiques
 Fb = nx.read_edgelist('facebook_combined.txt')
@@ -24,40 +25,54 @@ DI_ref = 8
 
 class Individu:
 	def __init__(self, TYPE, N):
-		if (TYPE != "SF" and TYPE != "Random" and TYPE != "SW"):	
+		if (TYPE != "SF" and TYPE != "Random" and TYPE != "SW" and TYPE != "NONE"):	
 			sys.exit("ERREUR DE SAISIE DANS LE TYPE DU GRAPHE")
 		if TYPE == "SW":
-			G = nx.newman_watts_strogatz_graph(N, 4, 0.50)
+			self.G = nx.newman_watts_strogatz_graph(N, 4, 0.50)
 		#if TYPE == "Random":
 			#G = nx.complete_graph(N)
 		if TYPE == "SF":
-			G = nx.barabasi_albert_graph(N, 5)
+			self.G = nx.barabasi_albert_graph(N, 5)
+		if TYPE == "NONE":
+			self.G = nx.Graph()
+			self.N = N
 		
+		if TYPE != "NONE":
+			Clusts = nx.clustering(self.G).values()
+			self.CC =  sum(Clusts)/float(len(Clusts))
 			
-		self.CC = nx.average_clustering(G)
-		self.DI = nx.diameter(G)
-		self.DD = nx.degree_histogram(G)
-		self.W = 0
-		self.maj_fitness()
-		self.N = N
-		self.matrix = nx.to_numpy_matrix(G)
+			
+			self.DI = nx.diameter(self.G)
+			self.DD = nx.degree_histogram(self.G)
+			self.W = 0
+			self.maj_fitness()
+			self.N = N
+			#self.matrix = nx.to_numpy_matrix(self.G)
 
 	def __str__(self):  # Ce qui sera affiché si on print juste Individu
 		return "Fitness : {}".format(self.W)
 
-	def prattribut(self):
+	def display(self, *args):
 		#print "Matrice d'adjacence :\n", (self.matrix) #Prend de la place...
-		print "CC", self.CC
-		print "Diamètre :", self.DI
-		print "Distribution des degres :", self.DD
-		print "Fitness", self.W
+		if "coeffs" in args:
+			print "CC", self.CC
+			print "Diamètre :", self.DI
+			print "Distribution des degres :", self.DD
+		if "fitness" in args:
+			print "Fitness", self.W
+		if "graph" in args:
+			print "nodes :", self.G.nodes()
+			print "edges :", self.G.edges()
+		if "matrix" in args:
+			print nx.to_numpy_matrix(self.G)
+			
 		
 		
 	def maj_attributs(self):
-		Graph = nx.from_numpy_matrix(self.matrix)
-		self.CC = nx.average_clustering(Graph)
-		self.DI = nx.diameter(Graph)
-		self.DD = nx.degree_histogram(Graph)
+		Clusts = nx.clustering(self.G).values()
+		self.CC =  sum(Clusts)/float(len(Clusts))
+		self.DI = nx.diameter(self.G)
+		self.DD = nx.degree_histogram(self.G)
 		
 	
 	def maj_fitness(self):
@@ -88,7 +103,7 @@ class Individu:
 		Alpha = Fit(DD_prob).power_law.alpha #Coefficient de la loi de puissance de la distribution des degres
 		wDD = min([Alpha, Alpha_ref])/max([Alpha, Alpha_ref]) #Fitness de la distribution des degres (en passant par la comparaison des lois de puissance)
 		
-		self.W = (wCC + wDI + wDD)/3 #FITNESS TOTALE
+		self.W = ((wCC + wDI + wDD)/3) #FITNESS TOTALE
 		
 		'''
 		wDD = 0
@@ -102,25 +117,24 @@ class Individu:
 		
 		self.W = wCC/3 + wDI/3 + wDD/3
 		'''
+		return self.W
+
+
 	def mutation(self):   #Fonction de mutation, on change un lien d'amitié sur l'individu sélectionné
-		print type(self.matrix)
-		i,j = np.random.randint(0,self.N,2)
-		if self.matrix[i,j] == 0:
-			self.matrix[i,j] = 1
-			self.matrix[j,i] = 1
-		elif self.matrix[i,j] == 1:
-			self.matrix[i,j] = 0
-			self.matrix[j,i] = 0
-			
+		n1 = rn.randint(0,self.N-1) #Indice du noeud
+		if len(list(self.G.edges(n1))) > 1:
+			e = rn.choice(list(self.G.edges(n1))) #Choisi un des edges du noeud selectionné
+			if self.G.degree(e[1]) > 1: #Si le 2e noeud du edge selectionne a plus de 2 edge
+				self.G.remove_edge(e[0], e[1])
+		
 
 
 #TESTS
 '''
-I = Individu("SW", 30)
-I.Maj_Fitness()
-I.prattribut()
+I = Individu("SW", 8)
+I.display("graph")
 I.mutation()
-I.Maj_attributs()
-I.Maj_Fitness()
-I.prattribut()
+I.display("graph")
+
+I.mutation()
 '''

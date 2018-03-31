@@ -12,6 +12,11 @@ class Population:
 		self.pop = []  # Contiendra tous les individus
 		for i in range(nb_individus): 
 			self.pop.append(Individu(graph_type,  ind_size))
+		
+		self.WMOY = [] #liste des fitness moyennes à chaque pas de temps
+		self.Maj_fitness()
+
+		
 
 	def __str__(self):  # Ce qui sera affiché si on print juste P
 		return "Taille de la population : {} \nTaille des individus : {}".format(self.nb_individus, self.ind_size)
@@ -20,7 +25,8 @@ class Population:
 	def display(self,*args): # Affiche les matrices de l'ensemble des graphes de la population et/ou la fitness
 		if "matrix" in args:
 			for i in range(len(self.pop)):
-				print "Graphe %d : \n " %i, self.pop[i].matrix
+				print "Graphe %d :" %i
+				self.pop[i].display("matrix")
 		if "fitness" in args:
 			W_list = []
 			for ind in range(self.nb_individus):
@@ -33,8 +39,12 @@ class Population:
 			self.pop[ind].maj_attributs()
 			
 	def Maj_fitness(self):
+		Wcumul = float(0)
 		for ind in range(self.nb_individus) : 
-			self.pop[ind].maj_fitness()
+			Wcumul += self.pop[ind].maj_fitness()
+		self.Wmoy = Wcumul/self.nb_individus
+		self.WMOY.append(self.Wmoy)
+		
 		
 	def ponderation(self):
 		list_W = [o.W for o in self.pop]  # Liste des fitness
@@ -42,23 +52,51 @@ class Population:
 		W_total = np.sum(list_W)  # Somme des fitness
 		return [Wi/W_total for Wi in list_W]  # Vecteur de poids pour la population à l'instant t
 
-	def roulette(self,poids):  # Resort 2 individus parents avec plus forte proba pour les meilleures fitness
+	def roulette(self,poids):  # Ressort 2 individus parents avec plus forte proba pour les meilleures fitness
 		# print 'POIDS : ', poids
 		papa, maman = np.random.choice(self.pop,2,p=poids)
 		# print 'PAPA : ', papa.W, 'MAMAN : ', maman.W
 		return papa, maman  # Oui bon désolé pour le raccourci, on va dire que pour faire des enfants il faut un papa et une maman
 
-	def crossing_over2(self): # FONCTION BIDON A MODIFIER
-		return self.pop[-1]
+	def crossing_over(self, G1, G2): #Prend 2 graphes parents en argument en retourne un graph enfant
+		n1 = rn.randint(0,self.ind_size) #Nombre de noeud provenant du graphe 1 choisi aleatoirement
+		Noeuds1 = rn.sample(list(G1.G.nodes), n1) #Liste des noeuds de n1 choisis
+		Noeuds2 = []
+		for n in range(self.ind_size): #Remplissage de la liste des noeuds provenant de G2
+			if n not in Noeuds1:
+				Noeuds2.append(n)
+				
+		print "noeuds du g1 :", Noeuds1
+		print "noeuds du g2 :", Noeuds2
+		
+		Edges = [] #Liste des edges des noeuds de G1
+		for noeud in Noeuds1:
+			for e in list(G1.G.edges(noeud)):
+				Edges.append(e)
+		Edges2 = [] #Liste des edges des noeuds de G2
+		for noeud in Noeuds2:
+			for e in list(G2.G.edges(noeud)):
+				Edges2.append(e)
+		
+		G3 = Individu("NONE", self.ind_size) #Initialisation du graph enfant
+		G3.G.add_nodes_from(G1.G) #Possede le meme nombre de noeuds que les graphes parents
+		G3.G.add_edges_from(Edges) #Prend les edges de G1
+		G3.G.add_edges_from(Edges2) # Prend les edges de G2
+		
+		#Met a jour les attributs et la fitness du graph
+		G3.maj_attributs()
+		G3.maj_fitness()
+		
+		return G3 #Retourne le graph enfant
 
-	def selection(self, proba_crossing_over = 0.8):
+	def selection(self, proba_crossing_over = 0.40):
 		n = int(proba_crossing_over*self.nb_individus)  # Où n est le nombre de crossing-over
 		m = self.nb_individus - n  # Où m est le nombre d'individus gardés à l'identique
 		self.pop.sort(key=operator.attrgetter('W'), reverse=True)  # Trie par fitness ; plus rapide que sorted puisque pas de nouvelle liste créée
 		poids = self.ponderation()
 		for i in range(n):  # Pour créer les n enfants
 			papa, maman = self.roulette(poids)
-			enfant = self.crossing_over2()  # Faire la fonction crossing over2
+			enfant = self.crossing_over(papa, maman)
 			self.pop[i+m] = enfant  # On renouvelle les n moins bons individus dans la population
 		# print [o.W for o in self.pop]  # On vérifie que la population a bien été renouvelée
 		# Intéressant à savoir : si on veut récupérer les n meilleurs d'une liste on peut voir ce lien : https://docs.python.org/3/library/heapq.html#heapq.nlargest
@@ -67,34 +105,24 @@ class Population:
 		indice = np.random.randint(1,1000) # Proba de 1/1000 qu'un individu mute
 		if indice < self.nb_individus:
 			self.pop[indice].mutation() #Fonction mutation appelée dans Individus
+			
+	def run(self, n): #n nombre d'iterations
+		for i in range(n):
+			self.mutation()
+			self.selection()
+			self.Maj_attributs()
+			self.Maj_fitness()
 
-	def Crossing_over(self):
-		g1, g2 = np.random.choice(self.nb_individus, 2, replace = False) #Selection des 2 individus
-		I1, I2 = np.random.choice(self.ind_size+1, 2, replace = False) #Selection de la portion de la matrice à interchanger
-		i1 = min(I1, I2)
-		i2 = max(I1, I2)
-		
-		#STOCKAGE
-		c1 = np.matrix(self.pop[g1].matrix[:,i1:i2])
-		c2 = np.matrix(self.pop[g2].matrix[:,i1:i2])
-		l1 = np.matrix(self.pop[g1].matrix[i1:i2,:])
-		l2 = np.matrix(self.pop[g2].matrix[i1:i2,:])
-		#REMPLACEMENT
-		self.pop[g1].matrix[:,i1:i2] = c2
-		self.pop[g1].matrix[i1:i2,:] = l2
-		self.pop[g2].matrix[:,i1:i2] = c1
-		self.pop[g2].matrix[i1:i2,:] = l1
 
-		
 
 
 '=========================================================================================================='
 '						DECLARATION DES VARIABLES ET INSTANCIATION DE LA POPULATION'
 '=========================================================================================================='
 
-taille_population = 10
-taille_individus = 10
-nb_it = 1
+taille_population = 2
+taille_individus = 15
+nb_it = 100
 P = Population(taille_population, "SW", taille_individus)
 list_best_fitness = []
 
@@ -103,8 +131,10 @@ list_best_fitness = []
 '==========================================================================================================' 
 ### TEST POUR SELECTION :
 print '\n------------> Test mise à jour de la population <------------'
-fit = P.selection()
-
+P.display("matrix")
+P.crossing_over(P.pop[0], P.pop[1]).display("matrix")
+#P.run(nb_it)
+#print P.WMOY
 
 # print '\n------------> Test mise à jour de la population <------------'
 # print P  # Fait appel à la méthode spéciale __str__
