@@ -11,16 +11,13 @@ class Population:
 		self.ind_size = ind_size
 		self.pop = []  # Contiendra tous les individus
 		for i in range(nb_individus): 
-			self.pop.append(Individu(graph_type,  ind_size))
+			self.pop.append(Individu(graph_type, ind_size))
 		
 		self.WMOY = [] #liste des fitness moyennes à chaque pas de temps
-		self.Maj_fitness()
-
-		
+		self.Maj_fitness()	
 
 	def __str__(self):  # Ce qui sera affiché si on print juste P
 		return "Taille de la population : {} \nTaille des individus : {}".format(self.nb_individus, self.ind_size)
-
 
 	def display(self,*args): # Affiche les matrices de l'ensemble des graphes de la population et/ou la fitness
 		if "matrix" in args:
@@ -34,6 +31,7 @@ class Population:
 			print "FITNESS :", W_list
 			print "FITNESS MOYENNE :", np.sum(W_list) / self.nb_individus
 	
+
 	def Maj_attributs(self):
 		for ind in range(self.nb_individus) : 
 			self.pop[ind].maj_attributs()
@@ -108,8 +106,8 @@ class Population:
 			
 	def run(self, n): #n nombre d'iterations
 		for i in range(n):
-			self.mutation()
 			self.selection()
+			self.mutation()
 			self.Maj_attributs()
 			self.Maj_fitness()
 
