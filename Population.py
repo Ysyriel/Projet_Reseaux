@@ -57,15 +57,15 @@ class Population:
 		return papa, maman  # Oui bon désolé pour le raccourci, on va dire que pour faire des enfants il faut un papa et une maman
 
 	def crossing_over(self, G1, G2): #Prend 2 graphes parents en argument en retourne un graph enfant
-		n1 = rn.randint(0,self.ind_size) #Nombre de noeud provenant du graphe 1 choisi aleatoirement
+		n1 = rn.randint(0,self.ind_size) #Nombre de noeuds provenant du graphe 1 choisis aleatoirement
 		Noeuds1 = rn.sample(list(G1.G.nodes), n1) #Liste des noeuds de n1 choisis
 		Noeuds2 = []
 		for n in range(self.ind_size): #Remplissage de la liste des noeuds provenant de G2
 			if n not in Noeuds1:
 				Noeuds2.append(n)
 				
-		print "noeuds du g1 :", Noeuds1
-		print "noeuds du g2 :", Noeuds2
+		#print "noeuds du g1 :", Noeuds1
+		#print "noeuds du g2 :", Noeuds2
 		
 		Edges = [] #Liste des edges des noeuds de G1
 		for noeud in Noeuds1:
@@ -82,22 +82,26 @@ class Population:
 		G3.G.add_edges_from(Edges2) # Prend les edges de G2
 		
 		#Met a jour les attributs et la fitness du graph
-		G3.maj_attributs()
-		G3.maj_fitness()
+		#G3.maj_attributs()
+		#G3.maj_fitness()
 		
 		return G3 #Retourne le graph enfant
 
-	def selection(self, proba_crossing_over = 0.40):
+	def selection(self, proba_crossing_over = 0.90):
 		n = int(proba_crossing_over*self.nb_individus)  # Où n est le nombre de crossing-over
 		m = self.nb_individus - n  # Où m est le nombre d'individus gardés à l'identique
 		self.pop.sort(key=operator.attrgetter('W'), reverse=True)  # Trie par fitness ; plus rapide que sorted puisque pas de nouvelle liste créée
+		print self.pop[0].W
 		poids = self.ponderation()
 		for i in range(n):  # Pour créer les n enfants
 			papa, maman = self.roulette(poids)
 			enfant = self.crossing_over(papa, maman)
 			self.pop[i+m] = enfant  # On renouvelle les n moins bons individus dans la population
+			self.pop[i+m].maj_attributs()
+			self.pop[i+m].maj_fitness()
 		# print [o.W for o in self.pop]  # On vérifie que la population a bien été renouvelée
 		# Intéressant à savoir : si on veut récupérer les n meilleurs d'une liste on peut voir ce lien : https://docs.python.org/3/library/heapq.html#heapq.nlargest
+
 
 	def mutation(self):
 		indice = np.random.randint(1,1000) # Proba de 1/1000 qu'un individu mute
@@ -108,8 +112,9 @@ class Population:
 		for i in range(n):
 			self.selection()
 			self.mutation()
-			self.Maj_attributs()
-			self.Maj_fitness()
+			#print i+1,"/",n
+			#self.Maj_attributs()
+			#self.Maj_fitness()
 
 
 
@@ -118,9 +123,9 @@ class Population:
 '						DECLARATION DES VARIABLES ET INSTANCIATION DE LA POPULATION'
 '=========================================================================================================='
 
-taille_population = 2
-taille_individus = 15
-nb_it = 100
+taille_population = 20
+taille_individus = 100
+nb_it = 2
 P = Population(taille_population, "SW", taille_individus)
 list_best_fitness = []
 
@@ -129,9 +134,12 @@ list_best_fitness = []
 '==========================================================================================================' 
 ### TEST POUR SELECTION :
 print '\n------------> Test mise à jour de la population <------------'
-P.display("matrix")
-P.crossing_over(P.pop[0], P.pop[1]).display("matrix")
-#P.run(nb_it)
+#P.display("matrix")
+#P.crossing_over(P.pop[0], P.pop[1]).display("matrix")
+t0 = time.time()
+P.run(nb_it)
+print time.time()-t0
+P.display("fitness")
 #print P.WMOY
 
 # print '\n------------> Test mise à jour de la population <------------'
