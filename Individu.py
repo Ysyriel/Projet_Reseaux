@@ -67,7 +67,6 @@ class Individu:
 			print nx.to_numpy_matrix(self.G)
 			
 		
-		
 	def maj_attributs(self):
 		Clusts = nx.clustering(self.G).values()
 		self.CC =  sum(Clusts)/float(len(Clusts))

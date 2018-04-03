@@ -124,22 +124,24 @@ class Population:
 '=========================================================================================================='
 
 taille_population = 20
-taille_individus = 1000
+taille_individus = 500
 nb_it = 100
+t0 = time.time()
 P = Population(taille_population, "SW", taille_individus)
+print "Temps de génération de la population : ",time.time()-t0
 list_best_fitness = []
 
 '=========================================================================================================='
 '												RUN DE TEST'
 '==========================================================================================================' 
 ### TEST POUR SELECTION :
-print '\n------------> Test mise à jour de la population <------------'
+#print '\n------------> Test mise à jour de la population <------------'
 #P.display("matrix")
 #P.crossing_over(P.pop[0], P.pop[1]).display("matrix")
 t0 = time.time()
 P.run(nb_it)
-print time.time()-t0
-P.display("fitness")
+print "Temps d'execution des iterations : ", time.time()-t0
+#P.display("fitness")
 #print P.WMOY
 
 # print '\n------------> Test mise à jour de la population <------------'
