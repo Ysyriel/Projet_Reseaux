@@ -124,8 +124,8 @@ class Population:
 '=========================================================================================================='
 
 taille_population = 20
-taille_individus = 100
-nb_it = 2
+taille_individus = 1000
+nb_it = 100
 P = Population(taille_population, "SW", taille_individus)
 list_best_fitness = []
 
