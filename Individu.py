@@ -29,8 +29,8 @@ class Individu:
 			sys.exit("ERREUR DE SAISIE DANS LE TYPE DU GRAPHE")
 		if TYPE == "SW":
 			self.G = nx.newman_watts_strogatz_graph(N, 4, 0.50)
-		#if TYPE == "Random":
-			#G = nx.complete_graph(N)
+		if TYPE == "Random":
+			self.G = nx.gnp_random_graph(N,0.6)
 		if TYPE == "SF":
 			self.G = nx.barabasi_albert_graph(N, 5)
 		if TYPE == "NONE":
@@ -66,7 +66,6 @@ class Individu:
 		if "matrix" in args:
 			print nx.to_numpy_matrix(self.G)
 			
-		
 		
 	def maj_attributs(self):
 		Clusts = nx.clustering(self.G).values()

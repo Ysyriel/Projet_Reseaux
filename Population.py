@@ -11,16 +11,13 @@ class Population:
 		self.ind_size = ind_size
 		self.pop = []  # Contiendra tous les individus
 		for i in range(nb_individus): 
-			self.pop.append(Individu(graph_type,  ind_size))
+			self.pop.append(Individu(graph_type, ind_size))
 		
 		self.WMOY = [] #liste des fitness moyennes à chaque pas de temps
-		self.Maj_fitness()
-
-		
+		self.Maj_fitness()	
 
 	def __str__(self):  # Ce qui sera affiché si on print juste P
 		return "Taille de la population : {} \nTaille des individus : {}".format(self.nb_individus, self.ind_size)
-
 
 	def display(self,*args): # Affiche les matrices de l'ensemble des graphes de la population et/ou la fitness
 		if "matrix" in args:
@@ -34,9 +31,6 @@ class Population:
 			#print "FITNESS :", W_list
 			print "FITNESS MOYENNE :", np.sum(W_list) / self.nb_individus
 	
-	def Maj_attributs(self):
-		for ind in range(self.nb_individus) : 
-			self.pop[ind].maj_attributs()
 			
 	def Maj_fitness(self):
 		Wcumul = float(0)
@@ -44,7 +38,6 @@ class Population:
 			Wcumul += self.pop[ind].maj_fitness()
 		self.Wmoy = Wcumul/self.nb_individus
 		self.WMOY.append(self.Wmoy)
-		
 		
 	def ponderation(self):
 		list_W = [o.W for o in self.pop]  # Liste des fitness
@@ -59,7 +52,7 @@ class Population:
 		return papa, maman  # Oui bon désolé pour le raccourci, on va dire que pour faire des enfants il faut un papa et une maman
 
 	def crossing_over(self, G1, G2): #Prend 2 graphes parents en argument en retourne un graph enfant
-		n1 = rn.randint(0,self.ind_size) #Nombre de noeud provenant du graphe 1 choisi aleatoirement
+		n1 = rn.randint(0,self.ind_size) #Nombre de noeuds provenant du graphe 1 choisis aleatoirement
 		Noeuds1 = rn.sample(list(G1.G.nodes), n1) #Liste des noeuds de n1 choisis
 		Noeuds2 = []
 		for n in range(self.ind_size): #Remplissage de la liste des noeuds provenant de G2
@@ -86,13 +79,15 @@ class Population:
 		#Met a jour les attributs et la fitness du graph
 		G3.maj_attributs()
 		G3.maj_fitness()
-		
+		print "G3 : ",G3.CC, G3.DI, G3.DD
+
 		return G3 #Retourne le graph enfant
 
-	def selection(self, proba_crossing_over = 0.40):
+	def selection(self, proba_crossing_over = 0.90):
 		n = int(proba_crossing_over*self.nb_individus)  # Où n est le nombre de crossing-over
 		m = self.nb_individus - n  # Où m est le nombre d'individus gardés à l'identique
 		self.pop.sort(key=operator.attrgetter('W'), reverse=True)  # Trie par fitness ; plus rapide que sorted puisque pas de nouvelle liste créée
+		print self.pop[0].W
 		poids = self.ponderation()
 		for i in range(n):  # Pour créer les n enfants
 			papa, maman = self.roulette(poids)
@@ -101,6 +96,7 @@ class Population:
 		# print [o.W for o in self.pop]  # On vérifie que la population a bien été renouvelée
 		# Intéressant à savoir : si on veut récupérer les n meilleurs d'une liste on peut voir ce lien : https://docs.python.org/3/library/heapq.html#heapq.nlargest
 
+
 	def mutation(self):
 		indice = np.random.randint(1,1000) # Proba de 1/1000 qu'un individu mute
 		if indice < self.nb_individus:
@@ -108,11 +104,13 @@ class Population:
 			
 	def run(self, n): #n nombre d'iterations
 		for i in range(n):
-			self.mutation()
 			self.selection()
-			self.Maj_attributs()
-			self.Maj_fitness()
-			self.display('fitness')
+			self.mutation()
+			#print i+1,"/",n
+			#self.Maj_attributs()
+			#self.Maj_fitness()
+
+
 
 
 
@@ -120,20 +118,39 @@ class Population:
 '						DECLARATION DES VARIABLES ET INSTANCIATION DE LA POPULATION'
 '=========================================================================================================='
 
+<<<<<<< HEAD
 taille_population = 50
 taille_individus = 1000
 nb_it = 100
 P = Population(taille_population, "SW", taille_individus)
+=======
+taille_population = 20
+taille_individus = 20
+nb_it = 1
+t0 = time.time()
+P = Population(taille_population, "Random", taille_individus)
+print "Temps de génération de la population : ",time.time()-t0
+>>>>>>> d0adc6314d6ccfa793717876252654eaef211b03
 list_best_fitness = []
 
 '=========================================================================================================='
 '												RUN DE TEST'
 '==========================================================================================================' 
 ### TEST POUR SELECTION :
+<<<<<<< HEAD
 print '\n------------> Test mise à jour de la population <------------'
 #P.display("matrix")
 #P.crossing_over(P.pop[0], P.pop[1]).display("matrix")
 P.run(nb_it)
+=======
+#print '\n------------> Test mise à jour de la population <------------'
+#P.display("matrix")
+#P.crossing_over(P.pop[0], P.pop[1]).display("matrix")
+t0 = time.time()
+P.run(nb_it)
+print "Temps d'execution des iterations : ", time.time()-t0
+#P.display("fitness")
+>>>>>>> d0adc6314d6ccfa793717876252654eaef211b03
 #print P.WMOY
 
 # print '\n------------> Test mise à jour de la population <------------'
