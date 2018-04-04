@@ -118,31 +118,19 @@ class Population:
 '						DECLARATION DES VARIABLES ET INSTANCIATION DE LA POPULATION'
 '=========================================================================================================='
 
-<<<<<<< HEAD
-taille_population = 50
-taille_individus = 1000
-nb_it = 100
-P = Population(taille_population, "SW", taille_individus)
-=======
+
 taille_population = 20
 taille_individus = 20
 nb_it = 1
 t0 = time.time()
 P = Population(taille_population, "Random", taille_individus)
 print "Temps de génération de la population : ",time.time()-t0
->>>>>>> d0adc6314d6ccfa793717876252654eaef211b03
 list_best_fitness = []
 
 '=========================================================================================================='
 '												RUN DE TEST'
 '==========================================================================================================' 
 ### TEST POUR SELECTION :
-<<<<<<< HEAD
-print '\n------------> Test mise à jour de la population <------------'
-#P.display("matrix")
-#P.crossing_over(P.pop[0], P.pop[1]).display("matrix")
-P.run(nb_it)
-=======
 #print '\n------------> Test mise à jour de la population <------------'
 #P.display("matrix")
 #P.crossing_over(P.pop[0], P.pop[1]).display("matrix")
@@ -150,7 +138,6 @@ t0 = time.time()
 P.run(nb_it)
 print "Temps d'execution des iterations : ", time.time()-t0
 #P.display("fitness")
->>>>>>> d0adc6314d6ccfa793717876252654eaef211b03
 #print P.WMOY
 
 # print '\n------------> Test mise à jour de la population <------------'
