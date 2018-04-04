@@ -31,10 +31,6 @@ class Population:
 			print "FITNESS :", W_list
 			print "FITNESS MOYENNE :", np.sum(W_list) / self.nb_individus
 	
-
-	def Maj_attributs(self):
-		for ind in range(self.nb_individus) : 
-			self.pop[ind].maj_attributs()
 			
 	def Maj_fitness(self):
 		Wcumul = float(0)
@@ -42,7 +38,6 @@ class Population:
 			Wcumul += self.pop[ind].maj_fitness()
 		self.Wmoy = Wcumul/self.nb_individus
 		self.WMOY.append(self.Wmoy)
-		
 		
 	def ponderation(self):
 		list_W = [o.W for o in self.pop]  # Liste des fitness
@@ -82,9 +77,10 @@ class Population:
 		G3.G.add_edges_from(Edges2) # Prend les edges de G2
 		
 		#Met a jour les attributs et la fitness du graph
-		#G3.maj_attributs()
-		#G3.maj_fitness()
-		
+		G3.maj_attributs()
+		G3.maj_fitness()
+		print "G3 : ",G3.CC, G3.DI, G3.DD
+
 		return G3 #Retourne le graph enfant
 
 	def selection(self, proba_crossing_over = 0.90):
@@ -97,8 +93,6 @@ class Population:
 			papa, maman = self.roulette(poids)
 			enfant = self.crossing_over(papa, maman)
 			self.pop[i+m] = enfant  # On renouvelle les n moins bons individus dans la population
-			self.pop[i+m].maj_attributs()
-			self.pop[i+m].maj_fitness()
 		# print [o.W for o in self.pop]  # On vérifie que la population a bien été renouvelée
 		# Intéressant à savoir : si on veut récupérer les n meilleurs d'une liste on peut voir ce lien : https://docs.python.org/3/library/heapq.html#heapq.nlargest
 
@@ -124,10 +118,10 @@ class Population:
 '=========================================================================================================='
 
 taille_population = 20
-taille_individus = 500
-nb_it = 100
+taille_individus = 20
+nb_it = 1
 t0 = time.time()
-P = Population(taille_population, "SW", taille_individus)
+P = Population(taille_population, "Random", taille_individus)
 print "Temps de génération de la population : ",time.time()-t0
 list_best_fitness = []
 
