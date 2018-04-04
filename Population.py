@@ -31,7 +31,7 @@ class Population:
 			W_list = []
 			for ind in range(self.nb_individus):
 				W_list.append(self.pop[ind].W)
-			print "FITNESS :", W_list
+			#print "FITNESS :", W_list
 			print "FITNESS MOYENNE :", np.sum(W_list) / self.nb_individus
 	
 	def Maj_attributs(self):
@@ -66,8 +66,8 @@ class Population:
 			if n not in Noeuds1:
 				Noeuds2.append(n)
 				
-		print "noeuds du g1 :", Noeuds1
-		print "noeuds du g2 :", Noeuds2
+		#print "noeuds du g1 :", Noeuds1
+		#print "noeuds du g2 :", Noeuds2
 		
 		Edges = [] #Liste des edges des noeuds de G1
 		for noeud in Noeuds1:
@@ -112,7 +112,7 @@ class Population:
 			self.selection()
 			self.Maj_attributs()
 			self.Maj_fitness()
-
+			self.display('fitness')
 
 
 
@@ -120,8 +120,8 @@ class Population:
 '						DECLARATION DES VARIABLES ET INSTANCIATION DE LA POPULATION'
 '=========================================================================================================='
 
-taille_population = 2
-taille_individus = 15
+taille_population = 50
+taille_individus = 1000
 nb_it = 100
 P = Population(taille_population, "SW", taille_individus)
 list_best_fitness = []
@@ -131,9 +131,9 @@ list_best_fitness = []
 '==========================================================================================================' 
 ### TEST POUR SELECTION :
 print '\n------------> Test mise à jour de la population <------------'
-P.display("matrix")
-P.crossing_over(P.pop[0], P.pop[1]).display("matrix")
-#P.run(nb_it)
+#P.display("matrix")
+#P.crossing_over(P.pop[0], P.pop[1]).display("matrix")
+P.run(nb_it)
 #print P.WMOY
 
 # print '\n------------> Test mise à jour de la population <------------'
