@@ -96,13 +96,13 @@ class Individu:
 		#Diff_CC = (CC_ref - self.CC)**2
 		#Diff_DI = (DI_ref - self.DI)**2
 		
-		wCC = min([CC_ref, self.CC])/max([CC_ref, self.CC]) #Fitness du coefficient de clustering
-		wDI = float(min([DI_ref, self.DI]))/max([DI_ref, self.DI]) #Fitness du diametre
+		self.wCC = min([CC_ref, self.CC])/max([CC_ref, self.CC]) #Fitness du coefficient de clustering
+		self.wDI = float(min([DI_ref, self.DI]))/max([DI_ref, self.DI]) #Fitness du diametre
 		DD_prob = np.array(self.DD)/float(np.sum(self.DD))
 		Alpha = Fit(DD_prob).power_law.alpha #Coefficient de la loi de puissance de la distribution des degres
-		wDD = min([Alpha, Alpha_ref])/max([Alpha, Alpha_ref]) #Fitness de la distribution des degres (en passant par la comparaison des lois de puissance)
+		self.wDD = min([Alpha, Alpha_ref])/max([Alpha, Alpha_ref]) #Fitness de la distribution des degres (en passant par la comparaison des lois de puissance)
 		
-		self.W = ((wCC + wDI + wDD)/3) #FITNESS TOTALE
+		self.W = ((self.wCC + self.wDI + self.wDD)/3) #FITNESS TOTALE
 		
 		'''
 		wDD = 0
@@ -121,10 +121,20 @@ class Individu:
 
 	def mutation(self):   #Fonction de mutation, on change un lien d'amitié sur l'individu sélectionné
 		n1 = rn.randint(0,self.N-1) #Indice du noeud
-		if len(list(self.G.edges(n1))) > 1:
+		
+		if len(list(self.G.edges(n1))) > 1: #Deletion d'un edge
 			e = rn.choice(list(self.G.edges(n1))) #Choisi un des edges du noeud selectionné
 			if self.G.degree(e[1]) > 1: #Si le 2e noeud du edge selectionne a plus de 2 edge
 				self.G.remove_edge(e[0], e[1])
+				
+		if len(list(self.G.edges(n1))) < self.N - 1: #Ajout d'un edge
+			edges = [x[1] for x in list(self.G.edges(n1))] #Liste des noeuds en lien avec n1 par une arete
+			n2 = rn.randint(0,self.N-1)
+			while n2 in edges:
+				n2 = rn.randint(0,self.N-1)
+			self.G.add_edge(n1, n2)
+		
+		#Met a jour les attributs et la fitness du graphe
 		self.maj_attributs()
 		self.maj_fitness()
 		
@@ -136,6 +146,4 @@ I = Individu("SW", 8)
 I.display("graph")
 I.mutation()
 I.display("graph")
-
-I.mutation()
 '''

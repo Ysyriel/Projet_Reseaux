@@ -4,6 +4,7 @@ from Individu import *
 import matplotlib.pyplot as plt
 import time
 import operator
+import matplotlib.pyplot as plt
 
 class Population:
 	def __init__(self, nb_individus, graph_type, ind_size):
@@ -13,7 +14,12 @@ class Population:
 		for i in range(nb_individus): 
 			self.pop.append(Individu(graph_type, ind_size))
 		
-		self.WMOY = [] #liste des fitness moyennes à chaque pas de temps
+		#liste des fitness moyennes incrementée chaque pas de temps
+		self.WMOY = []
+		self.WMOY_CC = []
+		self.WMOY_DI = []
+		self.WMOY_DD = []
+		
 		self.Maj_fitness()	
 
 	def __str__(self):  # Ce qui sera affiché si on print juste P
@@ -31,14 +37,36 @@ class Population:
 			print "FITNESS :", W_list
 		if "fitness_moy" in args:
 			print "FITNESS MOYENNE :", self.Wmoy
+		if "fitness_coeffs" in args:
+			print "fitness CC :", self.WCCmoy
+			print "fitness DI :", self.WDImoy
+			print "fitness DD :", self.WDDmoy
 	
 			
 	def Maj_fitness(self):
+		#Fitness globale et des coeffs cumulées
+		WCCcumul = float(0)
+		WDIcumul = float(0)
+		WDDcumul = float(0)
 		Wcumul = float(0)
+		
 		for ind in range(self.nb_individus) : 
-			Wcumul += self.pop[ind].maj_fitness()
+			Wcumul += self.pop[ind].maj_fitness() #Met a jour les fitness des individus
+			WCCcumul += self.pop[ind].wCC
+			WDIcumul += self.pop[ind].wDI
+			WDDcumul += self.pop[ind].wDD
+		
+		#fitness globale et des coeffs moyennes
 		self.Wmoy = Wcumul/self.nb_individus
+		self.WCCmoy = WCCcumul/self.nb_individus
+		self.WDImoy = WDIcumul/self.nb_individus
+		self.WDDmoy = WDDcumul/self.nb_individus
+		
+		#Sauvegarde des fitness moyennes
 		self.WMOY.append(self.Wmoy)
+		self.WMOY_CC.append(self.WCCmoy)
+		self.WMOY_DI.append(self.WDImoy)
+		self.WMOY_DD.append(self.WDDmoy)
 		
 	def ponderation(self):
 		list_W = [o.W for o in self.pop]  # Liste des fitness
@@ -84,7 +112,7 @@ class Population:
 
 		return G3 #Retourne le graph enfant
 
-	def selection(self, proba_crossing_over = 0.50):
+	def selection(self, proba_crossing_over = 0.70):
 		n = int(proba_crossing_over*self.nb_individus)  # Où n est le nombre de crossing-over
 		m = self.nb_individus - n  # Où m est le nombre d'individus gardés à l'identique
 		self.pop.sort(key=operator.attrgetter('W'), reverse=True)  # Trie par fitness ; plus rapide que sorted puisque pas de nouvelle liste créée
@@ -106,11 +134,17 @@ class Population:
 			
 	def run(self, n): #n nombre d'iterations
 		for i in range(n):
-			print "Iteration ",i,"/",n," :"
+			print "Iteration ",i+1,"/",n," :"
 			self.selection()
 			self.mutation()
 			self.Maj_fitness()
-			self.display("fitness", "fitness_moy")
+			self.display("fitness_moy", "fitness_coeffs")
+		plt.plot(self.WMOY)
+		plt.plot(self.WMOY_CC)
+		plt.plot(self.WMOY_DI)
+		plt.plot(self.WMOY_DD)
+		plt.legend(["glob", "CC", "DI", "DD"], loc=2)
+		plt.show()
 
 
 
@@ -121,26 +155,23 @@ class Population:
 '=========================================================================================================='
 
 
-taille_population = 30
-taille_individus = 150
-nb_it = 100
+taille_population = 4039
+taille_individus = 50
+nb_it = 30
 t0 = time.time()
 P = Population(taille_population, "SW", taille_individus)
 print "Temps de génération de la population : ",time.time()-t0
-list_best_fitness = []
+
 
 '=========================================================================================================='
 '												RUN DE TEST'
 '==========================================================================================================' 
-### TEST POUR SELECTION :
-#print '\n------------> Test mise à jour de la population <------------'
-#P.display("matrix")
-#P.crossing_over(P.pop[0], P.pop[1]).display("matrix")
+#RUN
 t0 = time.time()
 P.run(nb_it)
 print "Temps d'execution des iterations : ", time.time()-t0
-#P.display("fitness")
-#print P.WMOY
+
+
 
 # print '\n------------> Test mise à jour de la population <------------'
 # print P  # Fait appel à la méthode spéciale __str__
