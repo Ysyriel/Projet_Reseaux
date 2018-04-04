@@ -28,8 +28,9 @@ class Population:
 			W_list = []
 			for ind in range(self.nb_individus):
 				W_list.append(self.pop[ind].W)
-			#print "FITNESS :", W_list
-			print "FITNESS MOYENNE :", np.sum(W_list) / self.nb_individus
+			print "FITNESS :", W_list
+		if "fitness_moy" in args:
+			print "FITNESS MOYENNE :", self.Wmoy
 	
 			
 	def Maj_fitness(self):
@@ -47,12 +48,12 @@ class Population:
 
 	def roulette(self,poids):  # Ressort 2 individus parents avec plus forte proba pour les meilleures fitness
 		# print 'POIDS : ', poids
-		papa, maman = np.random.choice(self.pop,2,p=poids)
+		papa, maman = np.random.choice(self.pop,2,p=poids, replace=False)
 		# print 'PAPA : ', papa.W, 'MAMAN : ', maman.W
 		return papa, maman  # Oui bon désolé pour le raccourci, on va dire que pour faire des enfants il faut un papa et une maman
 
 	def crossing_over(self, G1, G2): #Prend 2 graphes parents en argument en retourne un graph enfant
-		n1 = rn.randint(0,self.ind_size) #Nombre de noeuds provenant du graphe 1 choisis aleatoirement
+		n1 = rn.randint(self.ind_size/4,3*self.ind_size/4) #Nombre de noeuds provenant du graphe 1 choisis aleatoirement
 		Noeuds1 = rn.sample(list(G1.G.nodes), n1) #Liste des noeuds de n1 choisis
 		Noeuds2 = []
 		for n in range(self.ind_size): #Remplissage de la liste des noeuds provenant de G2
@@ -79,15 +80,15 @@ class Population:
 		#Met a jour les attributs et la fitness du graph
 		G3.maj_attributs()
 		G3.maj_fitness()
-		print "G3 : ",G3.CC, G3.DI, G3.DD
+		#print "G3 : ",G3.CC, G3.DI, G3.DD
 
 		return G3 #Retourne le graph enfant
 
-	def selection(self, proba_crossing_over = 0.90):
+	def selection(self, proba_crossing_over = 0.50):
 		n = int(proba_crossing_over*self.nb_individus)  # Où n est le nombre de crossing-over
 		m = self.nb_individus - n  # Où m est le nombre d'individus gardés à l'identique
 		self.pop.sort(key=operator.attrgetter('W'), reverse=True)  # Trie par fitness ; plus rapide que sorted puisque pas de nouvelle liste créée
-		print self.pop[0].W
+		#print self.pop[0].W
 		poids = self.ponderation()
 		for i in range(n):  # Pour créer les n enfants
 			papa, maman = self.roulette(poids)
@@ -102,13 +103,14 @@ class Population:
 		if indice < self.nb_individus:
 			self.pop[indice].mutation() #Fonction mutation appelée dans Individus
 			
+			
 	def run(self, n): #n nombre d'iterations
 		for i in range(n):
+			print "Iteration ",i,"/",n," :"
 			self.selection()
 			self.mutation()
-			#print i+1,"/",n
-			#self.Maj_attributs()
-			#self.Maj_fitness()
+			self.Maj_fitness()
+			self.display("fitness", "fitness_moy")
 
 
 
@@ -119,11 +121,11 @@ class Population:
 '=========================================================================================================='
 
 
-taille_population = 20
-taille_individus = 20
-nb_it = 1
+taille_population = 30
+taille_individus = 150
+nb_it = 100
 t0 = time.time()
-P = Population(taille_population, "Random", taille_individus)
+P = Population(taille_population, "SW", taille_individus)
 print "Temps de génération de la population : ",time.time()-t0
 list_best_fitness = []
 

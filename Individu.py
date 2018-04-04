@@ -125,6 +125,8 @@ class Individu:
 			e = rn.choice(list(self.G.edges(n1))) #Choisi un des edges du noeud selectionné
 			if self.G.degree(e[1]) > 1: #Si le 2e noeud du edge selectionne a plus de 2 edge
 				self.G.remove_edge(e[0], e[1])
+		self.maj_attributs()
+		self.maj_fitness()
 		
 
 
