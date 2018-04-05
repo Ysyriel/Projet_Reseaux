@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 
 class Population:
 	def __init__(self, nb_individus, graph_type, ind_size):
+		CC_ref = 10000
 		self.nb_individus = nb_individus
 		self.ind_size = ind_size
 		self.pop = []  # Contiendra tous les individus
@@ -139,6 +140,8 @@ class Population:
 			self.mutation()
 			self.Maj_fitness()
 			self.display("fitness_moy", "fitness_coeffs")
+			
+		#PLOT
 		plt.plot(self.WMOY)
 		plt.plot(self.WMOY_CC)
 		plt.plot(self.WMOY_DI)
@@ -155,9 +158,9 @@ class Population:
 '=========================================================================================================='
 
 
-taille_population = 4039
-taille_individus = 50
-nb_it = 30
+taille_population = 50
+taille_individus = 30
+nb_it = 200
 t0 = time.time()
 P = Population(taille_population, "SW", taille_individus)
 print "Temps de génération de la population : ",time.time()-t0
