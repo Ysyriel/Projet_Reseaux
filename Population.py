@@ -127,26 +127,41 @@ class Population:
 		# Intéressant à savoir : si on veut récupérer les n meilleurs d'une liste on peut voir ce lien : https://docs.python.org/3/library/heapq.html#heapq.nlargest
 
 
-	def mutation(self):
-		indice = np.random.randint(1,1000) # Proba de 1/1000 qu'un individu mute
-		if indice < self.nb_individus:
+	def mutation(self, p): #proba de p qu'un individu mute
+		h = rn.random()
+		if h < p:
+			indice = rn.randint(0,self.nb_individus - 1) #Selection de l'individu muté
 			self.pop[indice].mutation() #Fonction mutation appelée dans Individus
 			
 			
-	def run(self, n): #n nombre d'iterations
+	def run(self, n, p_mut = 0.01, portion_crossing_over = 0.5): #n nombre d'iterations
+		Fichier = open('Resultats_%dI_%dN.txt'%(self.nb_individus, self.ind_size), 'a') #Creation du fichier
+		Fichier.write("Taille individu : %d \n Taille population : %d \n Proba mutation : %f \n Frequence des graphs à subir un crossing : %f \n" %(
+		self.ind_size, self.nb_individus, p_mut, portion_crossing_over))
+		
 		for i in range(n):
 			print "Iteration ",i+1,"/",n," :"
-			self.selection()
-			self.mutation()
+			self.selection(portion_crossing_over)
+			self.mutation(p_mut)
 			self.Maj_fitness()
 			self.display("fitness_moy", "fitness_coeffs")
-			
-		#PLOT
+			Fichier.write("Iteration %d : \n Fitness moyenne : %f \n Fit_CC : %f \n Fit_DI : %f \n Fit_DD : %f \n \n"%(i+1, self.Wmoy, self.WCCmoy, self.WDImoy, self.WDDmoy))
+			if ((i+1)%10 == 0):
+				plt.plot(self.WMOY)
+				plt.plot(self.WMOY_CC)
+				plt.plot(self.WMOY_DI)
+				plt.plot(self.WMOY_DD)
+				plt.legend(["glob", "CC", "DI", "DD"], loc=2)
+				plt.savefig('Plot__%dI_%dN_%dit.png'%(self.nb_individus, self.ind_size, i+1), bbox_inches='tight')
+				plt.show()
+				
+				
 		plt.plot(self.WMOY)
 		plt.plot(self.WMOY_CC)
 		plt.plot(self.WMOY_DI)
 		plt.plot(self.WMOY_DD)
 		plt.legend(["glob", "CC", "DI", "DD"], loc=2)
+		plt.savefig('Plot__%dI_%dN_%dit.png'%(self.nb_individus, self.ind_size, n), bbox_inches='tight')
 		plt.show()
 
 
@@ -158,9 +173,9 @@ class Population:
 '=========================================================================================================='
 
 
-taille_population = 50
+taille_population = 40
 taille_individus = 30
-nb_it = 200
+nb_it = 15
 t0 = time.time()
 P = Population(taille_population, "SW", taille_individus)
 print "Temps de génération de la population : ",time.time()-t0
