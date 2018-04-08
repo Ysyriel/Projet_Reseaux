@@ -134,7 +134,7 @@ class Population:
 			self.pop[indice].mutation() #Fonction mutation appelée dans Individus
 			
 			
-	def run(self, n, p_mut = 0.01, portion_crossing_over = 0.5): #n nombre d'iterations
+	def run(self, n, p_mut = 0.05, portion_crossing_over = 0.6): #n nombre d'iterations
 		Fichier = open('Resultats_%dI_%dN.txt'%(self.nb_individus, self.ind_size), 'a') #Creation du fichier
 		Fichier.write("Taille individu : %d \n Taille population : %d \n Proba mutation : %f \n Frequence des graphs à subir un crossing : %f \n" %(
 		self.ind_size, self.nb_individus, p_mut, portion_crossing_over))
@@ -147,22 +147,24 @@ class Population:
 			self.display("fitness_moy", "fitness_coeffs")
 			Fichier.write("Iteration %d : \n Fitness moyenne : %f \n Fit_CC : %f \n Fit_DI : %f \n Fit_DD : %f \n \n"%(i+1, self.Wmoy, self.WCCmoy, self.WDImoy, self.WDDmoy))
 			if ((i+1)%10 == 0):
-				plt.plot(self.WMOY)
-				plt.plot(self.WMOY_CC)
-				plt.plot(self.WMOY_DI)
-				plt.plot(self.WMOY_DD)
-				plt.legend(["glob", "CC", "DI", "DD"], loc=2)
+				fig,ax = plt.subplots()
+				ax.plot(self.WMOY,label="WMOY")
+				ax.plot(self.WMOY_CC,label="WMOY_CC")
+				ax.plot(self.WMOY_DI,label="WMOY_DI")
+				ax.plot(self.WMOY_DD,label="WMOY_DD")
+				ax.legend(["WMOY", "WMOY_CC", "WMOY_DI", "WMOY_DD"], loc=2)
 				plt.savefig('Plot__%dI_%dN_%dit.png'%(self.nb_individus, self.ind_size, i+1), bbox_inches='tight')
-				plt.show()
+				#plt.show()
 				
 				
-		plt.plot(self.WMOY)
-		plt.plot(self.WMOY_CC)
-		plt.plot(self.WMOY_DI)
-		plt.plot(self.WMOY_DD)
-		plt.legend(["glob", "CC", "DI", "DD"], loc=2)
+		fig,ax = plt.subplots()
+		ax.plot(self.WMOY,label="WMOY")
+		ax.plot(self.WMOY_CC,label="WMOY_CC")
+		ax.plot(self.WMOY_DI,label="WMOY_DI")
+		ax.plot(self.WMOY_DD,label="WMOY_DD")
+		ax.legend(["WMOY", "WMOY_CC", "WMOY_CI", "WMOY_DD"], loc=2)
 		plt.savefig('Plot__%dI_%dN_%dit.png'%(self.nb_individus, self.ind_size, n), bbox_inches='tight')
-		plt.show()
+		#plt.show()
 
 
 
@@ -173,9 +175,9 @@ class Population:
 '=========================================================================================================='
 
 
-taille_population = 40
-taille_individus = 30
-nb_it = 15
+taille_population = 50
+taille_individus = 4039
+nb_it = 10000
 t0 = time.time()
 P = Population(taille_population, "SW", taille_individus)
 print "Temps de génération de la population : ",time.time()-t0
